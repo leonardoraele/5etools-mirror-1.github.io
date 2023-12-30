@@ -16,6 +16,17 @@ ConverterConst.STR_RE_DAMAGE_TYPE = "(acid|bludgeoning|cold|fire|force|lightning
 ConverterConst.RE_DAMAGE_TYPE = new RegExp(`\\b${ConverterConst.STR_RE_DAMAGE_TYPE}\\b`, "g");
 ConverterConst.STR_RE_CLASS = `(?<name>artificer|barbarian|bard|cleric|druid|fighter|monk|paladin|ranger|rogue|sorcerer|warlock|wizard)`;
 
+class ConverterUtils {
+	static splitConjunct (str) {
+		return str
+			.split(/(?:,? (?:and|or) |, )/gi)
+			.map(it => it.trim())
+			.filter(Boolean)
+		;
+	}
+}
+globalThis.ConverterUtils = ConverterUtils;
+
 class _ParseStateBase {
 	constructor (
 		{
@@ -87,7 +98,8 @@ class BaseParser {
 			.replace(/\n\r/g, "\n")
 			.replace(/\r\n/g, "\n")
 			.replace(/\r/g, "\n")
-			.replace(/­\s*\n\s*/g, "")
+			.replace(/­\s*\n\s*/g, "") // Soft hyphen
+			.replace(/\s*\u00A0\s*/g, " ") // Non-breaking space
 			.replace(/[−–‒]/g, "-") // convert minus signs to hyphens
 		;
 
@@ -104,6 +116,8 @@ class BaseParser {
 		iptClean = this._getCleanInput_parens(iptClean, "[", "]");
 		iptClean = this._getCleanInput_parens(iptClean, "{", "}");
 
+		iptClean = this._getCleanInput_quotes(iptClean, `"`, `"`);
+
 		// Connect lines ending in, or starting in, a comma
 		iptClean = iptClean
 			.replace(/, *\n+ */g, ", ")
@@ -113,7 +127,7 @@ class BaseParser {
 			// Connect together e.g. `5d10\nForce damage`
 			.replace(new RegExp(`(?<start>\\d+) *\\n+(?<end>${ConverterConst.STR_RE_DAMAGE_TYPE} damage)\\b`, "gi"), (...m) => `${m.last().start} ${m.last().end}`)
 			// Connect together likely determiners/conjunctions/etc.
-			.replace(/(?<start>\b(the|a|a cumulative|an|this|that|these|those|its|his|her|their|they|have|extra|and|or|as|on|uses|to|at|using|reduced|effect|reaches) *)\n+\s*/g, (...m) => `${m.last().start} `)
+			.replace(/(?<start>\b(the|a|a cumulative|an|this|that|these|those|its|his|her|their|they|have|extra|and|or|as|on|uses|to|at|using|reduced|effect|reaches|with|of) *)\n+\s*/g, (...m) => `${m.last().start} `)
 			// Connect together e.g.:
 			//  - `+5\nto hit`, `your Spell Attack Modifier\nto hit`
 			//  - `your Wisdom\nmodifier`
@@ -121,11 +135,12 @@ class BaseParser {
 			// Connect together `<ability> (<skill>)`
 			.replace(new RegExp(`\\b(?<start>${Object.values(Parser.ATB_ABV_TO_FULL).join("|")}) *\\n+ *(?<end>\\((?:${Object.keys(Parser.SKILL_TO_ATB_ABV).join("|")})\\))`, "gi"), (...m) => `${m.last().start.trim()} ${m.last().end.trim()}`)
 			// Connect together e.g. `increases by\n1d6 when`
-			.replace(/(?<start>[a-z0-9]) *\n+ *(?<end>\d+d\d+ [a-z]+)/g, (...m) => `${m.last().start} ${m.last().end}`)
+			.replace(/(?<start>[a-z0-9]) *\n+ *(?<end>\d+d\d+( *[-+] *\d+)?,? [a-z]+)/g, (...m) => `${m.last().start} ${m.last().end}`)
 			// Connect together e.g. `2d4\n+PB`
 			.replace(/(?<start>(?:\d+)?d\d+) *\n *(?<end>[-+] *(?:\d+|PB) [a-z]+)/g, (...m) => `${m.last().start} ${m.last().end}`)
 			// Connect together likely word pairs
 			.replace(/\b(?<start>hit) *\n* *(?<end>points)\b/gi, (...m) => `${m.last().start} ${m.last().end}`)
+			.replace(/\b(?<start>save) *\n* *(?<end>DC)\b/gi, (...m) => `${m.last().start} ${m.last().end}`)
 		;
 
 		if (options) {
@@ -162,6 +177,28 @@ class BaseParser {
 		return lines.join("\n");
 	}
 
+	static _getCleanInput_quotes (iptClean, cOpen, cClose) {
+		const lines = iptClean
+			.split("\n");
+
+		for (let i = 0; i < lines.length; ++i) {
+			const line = lines[i];
+			const lineNxt = lines[i + 1];
+			if (!lineNxt) continue;
+
+			const cntOpen = line.split(cOpen).length - 1;
+			const cntClose = line.split(cClose).length - 1;
+
+			if (!(cntOpen % 2) || !(cntClose % 2)) continue;
+
+			lines[i] = `${line} ${lineNxt}`.replace(/ {2}/g, " ");
+			lines.splice(i + 1, 1);
+			i--;
+		}
+
+		return lines.join("\n");
+	}
+
 	static _hasEntryContent (trait) {
 		return trait && (trait.name || (trait.entries.length === 1 && trait.entries[0]) || trait.entries.length > 1);
 	}
@@ -185,6 +222,7 @@ class BaseParser {
 		opts = opts || {};
 
 		// If there is no previous entry to add to, do not continue
+		if (!entryArray) return false;
 		const lastEntry = entryArray.last();
 		if (typeof lastEntry !== "string") return false;
 
@@ -919,7 +957,8 @@ class EntryConvert {
 		getCurrentEntryArray () {
 			if (this.stack.last().type === "list") return this.stack.last().items;
 			if (this.stack.last().type === "entries") return this.stack.last().entries;
-			return this.stack.last();
+			if (this.stack.last() instanceof Array) return this.stack.last();
+			return null;
 		}
 
 		addEntry ({entry, isAllowCombine = false}) {

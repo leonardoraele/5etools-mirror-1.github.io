@@ -204,7 +204,8 @@ class SpellParser extends BaseParser {
 		line = ConvertUtil.cleanDashes(line).trim();
 
 		const mCantrip = /cantrip/i.exec(line);
-		const mSpellLevel = /^(\d+)(?:st|nd|rd|th)?[- ]level/i.exec(line);
+		const mSpellLeve = /^(?<level>\d+)(?:st|nd|rd|th)?[- ]level/i.exec(line)
+			|| /^Level (?<level>\d+)\b/i.exec(line);
 
 		if (mCantrip) {
 			let trailing = line.slice(mCantrip.index + "cantrip".length, line.length).trim();
@@ -224,8 +225,8 @@ class SpellParser extends BaseParser {
 			return;
 		}
 
-		if (mSpellLevel) {
-			line = line.slice(mSpellLevel.index + mSpellLevel[0].length);
+		if (mSpellLeve) {
+			line = line.slice(mSpellLeve.index + mSpellLeve[0].length);
 
 			let isRitual = false;
 			line = line.replace(/\((.*?)(?:[,;]\s*)?ritual(?:[,;]\s*)?(.*?)\)/i, (...m) => {
@@ -239,7 +240,7 @@ class SpellParser extends BaseParser {
 				stats.meta.ritual = true;
 			}
 
-			stats.level = Number(mSpellLevel[1]);
+			stats.level = Number(mSpellLeve.groups.level);
 
 			const [tkSchool, ...tksSchoolRest] = line.trim().split(" ");
 			stats.school = tkSchool;
@@ -265,14 +266,27 @@ class SpellParser extends BaseParser {
 		if (!trailing) return trailing;
 
 		return trailing
-			.replace(new RegExp(`\\(${ConverterConst.STR_RE_CLASS}\\)`, "i"), (...m) => {
-				(stats.groups ||= []).push({
-					name: m.last().name,
-					source: stats.source,
-				});
-				return "";
+			.split(/([()])/g)
+			.map(tk => {
+				return tk
+					.split(StrUtil.COMMAS_NOT_IN_PARENTHESES_REGEX)
+					.map(tk => {
+						return tk
+							.replace(new RegExp(ConverterConst.STR_RE_CLASS, "i"), (...m) => {
+								(stats.groups ||= []).push({
+									name: m.last().name,
+									source: stats.source,
+								});
+								return "";
+							})
+							.replace(/\s+/g, " ")
+						;
+					})
+					.filter(it => it.trim())
+					.join(",");
 			})
-			.replace(/\s+/g, " ")
+			.join("")
+			.replace(/\(\s*\)/g, "")
 			.trim();
 	}
 
@@ -296,7 +310,7 @@ class SpellParser extends BaseParser {
 		const mSelfRadius = /^self \((\d+)-(foot|mile) radius\)$/i.exec(cleanRange);
 		if (mSelfRadius) return stats.range = {type: "radius", distance: {type: getUnit(mSelfRadius[2]), amount: Number(mSelfRadius[1])}};
 
-		const mSelfSphere = /^self \((\d+)-(foot|mile)-radius sphere\)$/i.exec(cleanRange);
+		const mSelfSphere = /^self \((\d+)-(foot|mile)(?:-radius)? sphere\)$/i.exec(cleanRange);
 		if (mSelfSphere) return stats.range = {type: "sphere", distance: {type: getUnit(mSelfSphere[2]), amount: Number(mSelfSphere[1])}};
 
 		const mSelfCone = /^self \((\d+)-(foot|mile) cone\)$/i.exec(cleanRange);
@@ -308,7 +322,7 @@ class SpellParser extends BaseParser {
 		const mSelfCube = /^self \((\d+)-(foot|mile) cube\)$/i.exec(cleanRange);
 		if (mSelfCube) return stats.range = {type: "cube", distance: {type: getUnit(mSelfCube[2]), amount: Number(mSelfCube[1])}};
 
-		const mSelfHemisphere = /^self \((\d+)-(foot|mile)-radius hemisphere\)$/i.exec(cleanRange);
+		const mSelfHemisphere = /^self \((\d+)-(foot|mile)(?:-radius)? hemisphere\)$/i.exec(cleanRange);
 		if (mSelfHemisphere) return stats.range = {type: "hemisphere", distance: {type: getUnit(mSelfHemisphere[2]), amount: Number(mSelfHemisphere[1])}};
 
 		// region Homebrew

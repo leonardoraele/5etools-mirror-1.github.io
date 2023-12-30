@@ -2,7 +2,7 @@
 
 // in deployment, `IS_DEPLOYED = "<version number>";` should be set below.
 globalThis.IS_DEPLOYED = undefined;
-globalThis.VERSION_NUMBER = /* 5ETOOLS_VERSION__OPEN */"1.189.1"/* 5ETOOLS_VERSION__CLOSE */;
+globalThis.VERSION_NUMBER = /* 5ETOOLS_VERSION__OPEN */"1.197.0"/* 5ETOOLS_VERSION__CLOSE */;
 globalThis.DEPLOYED_STATIC_ROOT = ""; // "https://static.5etools.com/"; // FIXME re-enable this when we have a CDN again
 globalThis.DEPLOYED_IMG_ROOT = undefined;
 // for the roll20 script to set
@@ -118,7 +118,7 @@ String.prototype.toTitleCase = String.prototype.toTitleCase || function () {
 	for (let i = 0; i < len1; i++) {
 		str = str.replace(
 			StrUtil._TITLE_UPPER_WORDS_PLURAL_RE[i],
-			`${StrUtil.TITLE_UPPER_WORDS_PLURAL[i].toUpperCase()}`,
+			`${StrUtil.TITLE_UPPER_WORDS_PLURAL[i].slice(0, -1).toUpperCase()}${StrUtil.TITLE_UPPER_WORDS_PLURAL[i].slice(-1).toLowerCase()}`,
 		);
 	}
 
@@ -301,8 +301,8 @@ globalThis.StrUtil = {
 	// Certain minor words should be left lowercase unless they are the first or last words in the string
 	TITLE_LOWER_WORDS: ["a", "an", "the", "and", "but", "or", "for", "nor", "as", "at", "by", "for", "from", "in", "into", "near", "of", "on", "onto", "to", "with", "over", "von"],
 	// Certain words such as initialisms or acronyms should be left uppercase
-	TITLE_UPPER_WORDS: ["Id", "Tv", "Dm", "Ok", "Npc", "Pc", "Tpk", "Wip"],
-	TITLE_UPPER_WORDS_PLURAL: ["Ids", "Tvs", "Dms", "Oks", "Npcs", "Pcs", "Tpks", "Wips"], // (Manually pluralize, to avoid infinite loop)
+	TITLE_UPPER_WORDS: ["Id", "Tv", "Dm", "Ok", "Npc", "Pc", "Tpk", "Wip", "Dc"],
+	TITLE_UPPER_WORDS_PLURAL: ["Ids", "Tvs", "Dms", "Oks", "Npcs", "Pcs", "Tpks", "Wips", "Dcs"], // (Manually pluralize, to avoid infinite loop)
 
 	IRREGULAR_PLURAL_WORDS: {
 		"cactus": "cacti",
@@ -349,6 +349,17 @@ globalThis.StrUtil = {
 
 	toTitleCase (str) { return str.toTitleCase(); },
 	qq (str) { return (str = str || "").qq(); },
+};
+
+globalThis.NumberUtil = class {
+	static toFixedNumber (num, toFixed) {
+		if (num == null || isNaN(num)) return num;
+
+		num = Number(num);
+		if (!num) return num;
+
+		return Number(num.toFixed(toFixed));
+	}
 };
 
 globalThis.CleanUtil = {
@@ -428,6 +439,7 @@ CleanUtil.STR_REPLACEMENTS = {
 	"‑": "\\u2011",
 	"−": "\\u2212",
 	" ": "\\u00A0",
+	" ": "\\u2007",
 };
 CleanUtil.SHARED_REPLACEMENTS_REGEX = new RegExp(Object.keys(CleanUtil.SHARED_REPLACEMENTS).join("|"), "g");
 CleanUtil.STR_REPLACEMENTS_REGEX = new RegExp(Object.keys(CleanUtil.STR_REPLACEMENTS).join("|"), "g");
@@ -446,6 +458,7 @@ globalThis.SourceUtil = {
 		{group: "prerelease", displayName: "Prerelease"},
 		{group: "homebrew", displayName: "Homebrew"},
 		{group: "screen", displayName: "Screens"},
+		{group: "recipe", displayName: "Recipes"},
 		{group: "other", displayName: "Miscellaneous"},
 	],
 
@@ -496,7 +509,11 @@ globalThis.SourceUtil = {
 	},
 
 	isNonstandardSourceWotc (source) {
-		return source.startsWith(Parser.SRC_UA_PREFIX) || source.startsWith(Parser.SRC_UA_ONE_PREFIX) || source.startsWith(Parser.SRC_PS_PREFIX) || source.startsWith(Parser.SRC_AL_PREFIX) || source.startsWith(Parser.SRC_MCVX_PREFIX) || Parser.SOURCES_NON_STANDARD_WOTC.has(source);
+		return SourceUtil.isPrereleaseSource(source)
+			|| source.startsWith(Parser.SRC_PS_PREFIX)
+			|| source.startsWith(Parser.SRC_AL_PREFIX)
+			|| source.startsWith(Parser.SRC_MCVX_PREFIX)
+			|| Parser.SOURCES_NON_STANDARD_WOTC.has(source);
 	},
 
 	FILTER_GROUP_STANDARD: 0,
@@ -539,7 +556,7 @@ globalThis.SourceUtil = {
 };
 
 // CURRENCY ============================================================================================================
-globalThis.CurrencyUtil = {
+globalThis.CurrencyUtil = class {
 	/**
 	 * Convert 10 gold -> 1 platinum, etc.
 	 * @param obj Object of the form {cp: 123, sp: 456, ...} (values optional)
@@ -550,7 +567,7 @@ globalThis.CurrencyUtil = {
 	 * @param [opts.isPopulateAllValues] If all currency properties should be be populated, even if no currency of that
 	 * type is being returned (i.e. zero out unused coins).
 	 */
-	doSimplifyCoins (obj, opts) {
+	static doSimplifyCoins (obj, opts) {
 		opts = opts || {};
 
 		const conversionTable = opts.currencyConversionTable || Parser.getCurrencyConversionTable(opts.currencyConversionId);
@@ -630,23 +647,23 @@ globalThis.CurrencyUtil = {
 		if (opts.isPopulateAllValues) normalized.forEach(coinMeta => obj[coinMeta.coin] = obj[coinMeta.coin] || 0);
 
 		return obj;
-	},
+	}
 
 	/**
 	 * Convert a collection of coins into an equivalent value in copper.
 	 * @param obj Object of the form {cp: 123, sp: 456, ...} (values optional)
 	 */
-	getAsCopper (obj) {
+	static getAsCopper (obj) {
 		return Parser.FULL_CURRENCY_CONVERSION_TABLE
 			.map(currencyMeta => (obj[currencyMeta.coin] || 0) * (1 / currencyMeta.mult))
 			.reduce((a, b) => a + b, 0);
-	},
+	}
 
 	/**
 	 * Convert a collection of coins into an equivalent number of coins of the highest denomination.
 	 * @param obj Object of the form {cp: 123, sp: 456, ...} (values optional)
 	 */
-	getAsSingleCurrency (obj) {
+	static getAsSingleCurrency (obj) {
 		const simplified = CurrencyUtil.doSimplifyCoins({...obj});
 
 		if (Object.keys(simplified).length === 1) return simplified;
@@ -665,7 +682,24 @@ globalThis.CurrencyUtil = {
 			});
 
 		return out;
-	},
+	}
+
+	static getCombinedCurrency (currencyA, currencyB) {
+		const out = {};
+
+		[currencyA, currencyB]
+			.forEach(currency => {
+				Object.entries(currency)
+					.forEach(([coin, cnt]) => {
+						if (cnt == null) return;
+						if (isNaN(cnt)) throw new Error(`Unexpected non-numerical value "${JSON.stringify(cnt)}" for currency key "${coin}"`);
+
+						out[coin] = (out[coin] || 0) + cnt;
+					});
+			});
+
+		return out;
+	}
 };
 
 // CONVENIENCE/ELEMENTS ================================================================================================
@@ -2782,6 +2816,10 @@ UrlUtil.PG_CHANGELOG = "changelog.html";
 UrlUtil.PG_CHAR_CREATION_OPTIONS = "charcreationoptions.html";
 UrlUtil.PG_RECIPES = "recipes.html";
 UrlUtil.PG_CLASS_SUBCLASS_FEATURES = "classfeatures.html";
+UrlUtil.PG_CREATURE_FEATURES = "creaturefeatures.html";
+UrlUtil.PG_VEHICLE_FEATURES = "vehiclefeatures.html";
+UrlUtil.PG_OBJECT_FEATURES = "objectfeatures.html";
+UrlUtil.PG_TRAP_FEATURES = "trapfeatures.html";
 UrlUtil.PG_MAPS = "maps.html";
 UrlUtil.PG_SEARCH = "search.html";
 UrlUtil.PG_DECKS = "decks.html";
@@ -2817,6 +2855,10 @@ UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_CHAR_CREATION_OPTIONS] = UrlUtil.URL_TO_H
 UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_RECIPES] = (it) => `${UrlUtil.encodeArrayForHash(it.name, it.source)}${it._scaleFactor ? `${HASH_PART_SEP}${VeCt.HASH_SCALED}${HASH_SUB_KV_SEP}${it._scaleFactor}` : ""}`;
 UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_DECKS] = UrlUtil.URL_TO_HASH_GENERIC;
 UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_CLASS_SUBCLASS_FEATURES] = (it) => (it.__prop === "subclassFeature" || it.subclassSource) ? UrlUtil.URL_TO_HASH_BUILDER["subclassFeature"](it) : UrlUtil.URL_TO_HASH_BUILDER["classFeature"](it);
+UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_CREATURE_FEATURES] = UrlUtil.URL_TO_HASH_GENERIC;
+UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_VEHICLE_FEATURES] = UrlUtil.URL_TO_HASH_GENERIC;
+UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_OBJECT_FEATURES] = UrlUtil.URL_TO_HASH_GENERIC;
+UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_TRAP_FEATURES] = UrlUtil.URL_TO_HASH_GENERIC;
 UrlUtil.URL_TO_HASH_BUILDER[UrlUtil.PG_QUICKREF] = ({name, ixChapter, ixHeader}) => {
 	const hashParts = ["bookref-quick", ixChapter, UrlUtil.encodeForHash(name.toLowerCase())];
 	if (ixHeader) hashParts.push(ixHeader);
@@ -2940,7 +2982,10 @@ UrlUtil.PG_TO_NAME[UrlUtil.PG_TEXT_CONVERTER] = "Text Converter";
 UrlUtil.PG_TO_NAME[UrlUtil.PG_CHANGELOG] = "Changelog";
 UrlUtil.PG_TO_NAME[UrlUtil.PG_CHAR_CREATION_OPTIONS] = "Other Character Creation Options";
 UrlUtil.PG_TO_NAME[UrlUtil.PG_RECIPES] = "Recipes";
-UrlUtil.PG_TO_NAME[UrlUtil.PG_CLASS_SUBCLASS_FEATURES] = "Class & Subclass Features";
+UrlUtil.PG_TO_NAME[UrlUtil.PG_CREATURE_FEATURES] = "Creature Features";
+UrlUtil.PG_TO_NAME[UrlUtil.PG_VEHICLE_FEATURES] = "Vehicle Features";
+UrlUtil.PG_TO_NAME[UrlUtil.PG_OBJECT_FEATURES] = "Object Features";
+UrlUtil.PG_TO_NAME[UrlUtil.PG_TRAP_FEATURES] = "Trap Features";
 UrlUtil.PG_TO_NAME[UrlUtil.PG_MAPS] = "Maps";
 UrlUtil.PG_TO_NAME[UrlUtil.PG_DECKS] = "Decks";
 
@@ -5768,6 +5813,26 @@ globalThis.DataUtil = {
 		static _FILENAME = "fluff-rewards.json";
 	},
 
+	trap: class extends _DataUtilPropConfigSingleSource {
+		static _PAGE = UrlUtil.PG_TRAPS_HAZARDS;
+		static _FILENAME = "trapshazards.json";
+	},
+
+	trapFluff: class extends _DataUtilPropConfigSingleSource {
+		static _PAGE = UrlUtil.PG_TRAPS_HAZARDS;
+		static _FILENAME = "fluff-trapshazards.json";
+	},
+
+	hazard: class extends _DataUtilPropConfigSingleSource {
+		static _PAGE = UrlUtil.PG_TRAPS_HAZARDS;
+		static _FILENAME = "trapshazards.json";
+	},
+
+	hazardFluff: class extends _DataUtilPropConfigSingleSource {
+		static _PAGE = UrlUtil.PG_TRAPS_HAZARDS;
+		static _FILENAME = "fluff-trapshazards.json";
+	},
+
 	quickreference: {
 		/**
 		 * @param uid
@@ -5850,10 +5915,6 @@ globalThis.RollerUtil = {
 	 */
 	roll (max, fn = Math.random) {
 		return Math.floor(fn() * max);
-	},
-
-	addListRollButton (isCompact) {
-
 	},
 
 	getColRollType (colLabel) {
@@ -6611,11 +6672,17 @@ Array.prototype.getNext || Object.defineProperty(Array.prototype, "getNext", {
 	},
 });
 
+// See: https://en.wikipedia.org/wiki/Fisher%E2%80%93Yates_shuffle
 Array.prototype.shuffle || Object.defineProperty(Array.prototype, "shuffle", {
 	enumerable: false,
 	writable: true,
 	value: function () {
-		for (let i = 0; i < 10000; ++i) this.sort(() => Math.random() - 0.5);
+		const len = this.length;
+		const ixLast = len - 1;
+		for (let i = 0; i < len; ++i) {
+			const j = i + Math.floor(Math.random() * (ixLast - i + 1));
+			[this[i], this[j]] = [this[j], this[i]];
+		}
 		return this;
 	},
 });
@@ -7392,6 +7459,7 @@ if (!IS_VTT && typeof window !== "undefined") {
 	window.addEventListener("load", () => {
 		const docRoot = document.querySelector(":root");
 
+		// TODO(iOS)
 		if (CSS?.supports("top: constant(safe-area-inset-top)")) {
 			docRoot.style.setProperty("--safe-area-inset-top", "constant(safe-area-inset-top, 0)");
 			docRoot.style.setProperty("--safe-area-inset-right", "constant(safe-area-inset-right, 0)");
@@ -7479,54 +7547,3 @@ if (!IS_VTT && typeof window !== "undefined") {
 	// 	$(`.cancer__sidebar-rhs-inner--bottom`).append(`<div class="TEST_RHS_BOTTOM"></div>`)
 	// });
 }
-
-globalThis._Donate = {
-	// TAG Disabled until further notice
-	/*
-	init () {
-		if (IS_DEPLOYED) {
-			DataUtil.loadJSON(`https://get.5etools.com/money.php`).then(dosh => {
-				const pct = Number(dosh.donated) / Number(dosh.Goal);
-				$(`#don-total`).text(`€${dosh.Goal}`);
-				if (isNaN(pct)) {
-					throw new Error(`Was not a number! Values were ${dosh.donated} and ${dosh.Goal}`);
-				} else {
-					const $bar = $(`.don__bar_inner`);
-					$bar.css("width", `${Math.min(Math.ceil(100 * pct), 100)}%`).html(pct !== 0 ? `€${dosh.donated}&nbsp;` : "");
-					if (pct >= 1) $bar.css("background-color", "lightgreen");
-				}
-			}).catch(noDosh => {
-				$(`#don-wrapper`).remove();
-				throw noDosh;
-			});
-		}
-	},
-
-	async pNotDonating () {
-		const isFake = await StorageUtil.pIsAsyncFake();
-		const isNotDonating = await StorageUtil.pGet("notDonating");
-		return isFake || isNotDonating;
-	},
-	*/
-
-	// region Test code, please ignore
-	cycleLeader (ele) {
-		const modes = [{width: 970, height: 90}, {width: 970, height: 250}, {width: 320, height: 50}, {width: 728, height: 90}];
-		_Donate._cycleMode(ele, modes);
-	},
-
-	cycleSide (ele) {
-		const modes = [{width: 300, height: 250}, {width: 300, height: 600}];
-		_Donate._cycleMode(ele, modes);
-	},
-
-	_cycleMode (ele, modes) {
-		const $e = $(ele);
-		const pos = $e.data("pos") || 0;
-		const mode = modes[pos];
-		$e.css(mode);
-		$e.text(`${mode.width}*${mode.height}`);
-		$e.data("pos", (pos + 1) % modes.length);
-	},
-	// endregion
-};

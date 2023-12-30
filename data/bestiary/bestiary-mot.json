@@ -3430,6 +3430,12 @@
 			"otherSources": [
 				{
 					"source": "SatO"
+				},
+				{
+					"source": "BMT"
+				},
+				{
+					"source": "DoDk"
 				}
 			],
 			"_copy": {

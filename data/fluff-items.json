@@ -6,11 +6,35 @@
 	},
 	"itemFluff": [
 		{
+			"name": "+1 Fate Dealer's Deck",
+			"source": "BMT",
+			"_copy": {
+				"name": "Fate Dealer's Deck",
+				"source": "BMT"
+			}
+		},
+		{
+			"name": "+2 Fate Dealer's Deck",
+			"source": "BMT",
+			"_copy": {
+				"name": "Fate Dealer's Deck",
+				"source": "BMT"
+			}
+		},
+		{
 			"name": "+2 Ring of Protection",
 			"source": "TDCSR",
 			"_copy": {
 				"name": "Ring of Protection",
 				"source": "DMG"
+			}
+		},
+		{
+			"name": "+3 Fate Dealer's Deck",
+			"source": "BMT",
+			"_copy": {
+				"name": "Fate Dealer's Deck",
+				"source": "BMT"
 			}
 		},
 		{
@@ -134,6 +158,20 @@
 			]
 		},
 		{
+			"name": "Amulet of the Inferno",
+			"source": "CoA",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/CoA/Amulet of the Inferno.webp"
+					},
+					"credit": "Aaron Sims"
+				}
+			]
+		},
+		{
 			"name": "Amulet of the Planes",
 			"source": "DMG",
 			"images": [
@@ -174,6 +212,32 @@
 			]
 		},
 		{
+			"name": "Aqua Delerium",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Aqua Delerium.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Aqua Expurgo",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Aqua Expurgo.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Armblade",
 			"source": "ERLW",
 			"images": [
@@ -182,6 +246,19 @@
 					"href": {
 						"type": "internal",
 						"path": "items/ERLW/Armblade.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Armor of Fungal Spores",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Armor of Fungal Spores.webp"
 					}
 				}
 			]
@@ -208,6 +285,19 @@
 					"href": {
 						"type": "internal",
 						"path": "items/DMG/Armor of Resistance.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Armor of the Fallen",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Armor of the Fallen.webp"
 					}
 				}
 			]
@@ -643,6 +733,32 @@
 						"path": "items/GGR/Boros Keyrune.webp"
 					},
 					"credit": "Daniel Ljunggren"
+				}
+			]
+		},
+		{
+			"name": "Bottled Comet",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Bottled Comet.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Bow of Melodies",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Bow of Melodies.webp"
+					}
 				}
 			]
 		},
@@ -1096,6 +1212,19 @@
 			]
 		},
 		{
+			"name": "Crown of Whirling Comets",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Crown of Whirling Comets.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Crystalline Chronicle",
 			"source": "TCE",
 			"images": [
@@ -1293,6 +1422,32 @@
 			]
 		},
 		{
+			"name": "Deck of Dimensions",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Deck of Dimensions.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Deck of Many More Things",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Deck of Many More Things.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Deck of Many Things",
 			"source": "DMG",
 			"images": [
@@ -1301,6 +1456,19 @@
 					"href": {
 						"type": "internal",
 						"path": "items/DMG/Deck of Many Things.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Deck of Wonder",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Deck of Wonder.webp"
 					}
 				}
 			]
@@ -1329,6 +1497,19 @@
 						"path": "items/MOT/Dekella, Bident of Thassa.webp"
 					},
 					"credit": "Yeong-Hao Han"
+				}
+			]
+		},
+		{
+			"name": "Delerium-Forged Blade",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Delerium-Forged Blade.webp"
+					}
 				}
 			]
 		},
@@ -1725,6 +1906,19 @@
 			]
 		},
 		{
+			"name": "Euryale's Aegis",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Euryales Aegis.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Eversmoking Bottle",
 			"source": "DMG",
 			"images": [
@@ -1801,6 +1995,19 @@
 						"path": "items/DSotDQ/Fargab.webp"
 					},
 					"credit": "Kent Davis"
+				}
+			]
+		},
+		{
+			"name": "Fate Dealer's Deck",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Fate Dealers Deck.webp"
+					}
 				}
 			]
 		},
@@ -2260,6 +2467,19 @@
 			]
 		},
 		{
+			"name": "Hammer of Runic Focus",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Hammer of Runic Focus.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Hammer of Thunderbolts",
 			"source": "DMG",
 			"images": [
@@ -2295,6 +2515,19 @@
 					"href": {
 						"type": "internal",
 						"path": "items/DMG/Hand of Vecna.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Hardened Delerium-tipped Arrows",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Hardened Delerium-tipped Arrows.webp"
 					}
 				}
 			]
@@ -2712,6 +2945,19 @@
 			}
 		},
 		{
+			"name": "Inscrutable Staff",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Inscrutable Staff.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Instrument of the Bards, Anstruth Harp",
 			"source": "DMG",
 			"images": [
@@ -2879,6 +3125,19 @@
 					"href": {
 						"type": "internal",
 						"path": "items/DMG/Javelin of Lightning.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Jester's Mask",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Jesters Mask.webp"
 					}
 				}
 			]
@@ -4088,7 +4347,8 @@
 					"href": {
 						"type": "internal",
 						"path": "items/DMG/Potion of Water Breathing.webp"
-					}
+					},
+					"credit": "CoupleOfKooks"
 				}
 			]
 		},
@@ -4302,6 +4562,20 @@
 			]
 		},
 		{
+			"name": "Ranseur of Torture",
+			"source": "CoA",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/CoA/Ranseur of Torture.webp"
+					},
+					"credit": "Aaron Sims"
+				}
+			]
+		},
+		{
 			"name": "Red Wizard Blade",
 			"source": "HAT-LMI",
 			"images": [
@@ -4310,6 +4584,19 @@
 					"href": {
 						"type": "internal",
 						"path": "items/HAT-LMI/Red Wizard Blade.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Refined Delerium Dust",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Refined Delerium Dust.webp"
 					}
 				}
 			]
@@ -4747,6 +5034,21 @@
 			]
 		},
 		{
+			"name": "Ruby Rod of Asmodeus",
+			"source": "CoA",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/CoA/Ruby Rod of Asmodeus and Scourge of Shadow.webp"
+					},
+					"title": "Scourge of Shadow (left) and Ruby Rod of Asmodeus (right)",
+					"credit": "Aaron Sims"
+				}
+			]
+		},
+		{
 			"name": "Ruidium Shield",
 			"source": "CRCotN",
 			"images": [
@@ -4835,6 +5137,34 @@
 						"type": "internal",
 						"path": "items/DMG/Scarab of Protection.webp"
 					}
+				}
+			]
+		},
+		{
+			"name": "Sceptre of Saint Vitruvio",
+			"source": "DoDk",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/DoDk/Sceptre of Saint Vitruvio.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Scourge of Shadow",
+			"source": "CoA",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/CoA/Ruby Rod of Asmodeus and Scourge of Shadow.webp"
+					},
+					"title": "Scourge of Shadow (left) and Ruby Rod of Asmodeus (right)",
+					"credit": "Aaron Sims"
 				}
 			]
 		},
@@ -5010,6 +5340,32 @@
 					"href": {
 						"type": "internal",
 						"path": "items/BGDIA/Shield of the Hidden Lord.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Shield of the Tortoise",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Shield of the Tortoise.webp"
+					}
+				}
+			]
+		},
+		{
+			"name": "Shrieking Greaves",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Shrieking Greaves.webp"
 					}
 				}
 			]
@@ -5208,6 +5564,19 @@
 					},
 					"title": "Three Examples of a Spelljamming Helm",
 					"credit": "Robson Michel"
+				}
+			]
+		},
+		{
+			"name": "Spindle of Fate",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Spindle of Fate.webp"
+					}
 				}
 			]
 		},
@@ -5637,6 +6006,19 @@
 			]
 		},
 		{
+			"name": "Sword of the Planes",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Sword of the Planes.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Sword of Zariel",
 			"source": "BGDIA",
 			"images": [
@@ -5713,6 +6095,19 @@
 						"path": "items/TCE/Teeth of Dahlver-Nar.webp"
 					},
 					"credit": "Crystal Sully"
+				}
+			]
+		},
+		{
+			"name": "Telescopic Transporter",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Telescopic Transporter.webp"
+					}
 				}
 			]
 		},
@@ -6192,6 +6587,19 @@
 			]
 		},
 		{
+			"name": "Warrior's Passkey",
+			"source": "BMT",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/BMT/Warriors Passkey.webp"
+					}
+				}
+			]
+		},
+		{
 			"name": "Wave",
 			"source": "DMG",
 			"images": [
@@ -6439,6 +6847,20 @@
 				"name": "Wreath of the Prism",
 				"source": "EGW"
 			}
+		},
+		{
+			"name": "Wrought-Iron Tower",
+			"source": "CoA",
+			"images": [
+				{
+					"type": "image",
+					"href": {
+						"type": "internal",
+						"path": "items/CoA/Wrought-Iron Tower.webp"
+					},
+					"credit": "Aaron Sims"
+				}
+			]
 		},
 		{
 			"name": "Wyrmskull Throne",

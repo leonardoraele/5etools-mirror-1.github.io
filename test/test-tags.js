@@ -670,9 +670,10 @@ class AreaCheck extends DataTesterBase {
 				string: this._checkString.bind(this),
 			},
 		});
-		if (AreaCheck.errorSet.size) {
-			this._addMessage(`Errors in ${file}! See below:\n`);
 
+		if (AreaCheck.errorSet.size || AreaCheck.headerMap.__BAD?.length) this._addMessage(`Errors in ${file}! See below:\n`);
+
+		if (AreaCheck.errorSet.size) {
 			const toPrint = [...AreaCheck.errorSet].sort(SortUtil.ascSortLower);
 			toPrint.forEach(tp => this._addMessage(`${tp}\n`));
 		}
@@ -683,7 +684,7 @@ class AreaCheck extends DataTesterBase {
 	}
 }
 AreaCheck.errorSet = new Set();
-AreaCheck.fileMatcher = /\/(adventure-).*\.json/;
+AreaCheck.fileMatcher = /\/(adventure-|book-).*\.json/;
 
 class LootDataCheck extends GenericDataCheck {
 	static pRun () {
